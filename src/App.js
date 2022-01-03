@@ -89,9 +89,29 @@ const app = new Clarifai.App({
 function App() {
   const [input, setInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [box, setBox] = useState({});
 
   const onInputChange = (event) => {
     setInput(event.target.value);
+  };
+
+  const calculateFaceLocation = (data) => {
+    const clarifaiFace =
+      data.outputs[0]?.data.regions[0]?.region_info.bounding_box;
+    const image = document.getElementById("inputImage");
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - clarifaiFace.right_col * width,
+      bottomRow: height - clarifaiFace.bottom_row * height,
+    };
+  };
+
+  const displayFaceBox = (box) => {
+    console.log("Box", box);
+    setBox(box);
   };
 
   const onButtonSubmit = () => {
@@ -101,19 +121,12 @@ function App() {
       .predict(
         // .predict('53e1df302c079b3db8a0a36033ed2d15', this.state.input)
         Clarifai.FACE_DETECT_MODEL,
-        "https://upload.wikimedia.org/wikipedia/commons/0/0f/Grosser_Panda.JPG"
+        input
       )
-      .then(
-        (response) => {
-          console.log(
-            "Model",
-            response.rawData.outputs[0].data.regions[0].region_info.bounding_box
-          );
-        },
-        (err) => {
-          console.log("err", err);
-        }
-      );
+      .then((response) => {
+        displayFaceBox(calculateFaceLocation(response));
+      })
+      .catch((err) => console.log("err", err));
   };
 
   return (
@@ -127,7 +140,7 @@ function App() {
       <Logo />
       <Rank />
       <ImageLinkForm onInputChange={onInputChange} onSubmit={onButtonSubmit} />
-      <FaceRecognition imageUrl={imageUrl} />
+      <FaceRecognition box={box} imageUrl={imageUrl} />
     </div>
   );
 }
