@@ -7,6 +7,9 @@ import { Logo } from "./components/Logo/Logo";
 import { FaceRecognition } from "./components/FaceRecognition/FaceRecognition";
 import { ImageLinkForm } from "./components/ImageLinkForm/ImageLinkForm";
 import { Rank } from "./components/Rank/Rank";
+import { SignIn } from "./components/SignIn/SignIn";
+import { Register } from "./components/Register/Register";
+
 import "./App.css";
 
 const paramsOptions = {
@@ -90,6 +93,8 @@ function App() {
   const [input, setInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [box, setBox] = useState({});
+  const [route, setRoute] = useState("signin");
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   const onInputChange = (event) => {
     setInput(event.target.value);
@@ -129,6 +134,15 @@ function App() {
       .catch((err) => console.log("err", err));
   };
 
+  const onRouteChange = (route) => {
+    if (route === "signout") {
+      setIsSignedIn(false);
+    } else if (route === "home") {
+      setIsSignedIn(true);
+    }
+    setRoute(route);
+  };
+
   return (
     <div className="App">
       <Particles
@@ -136,11 +150,22 @@ function App() {
         className="particles"
         options={paramsOptions}
       />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm onInputChange={onInputChange} onSubmit={onButtonSubmit} />
-      <FaceRecognition box={box} imageUrl={imageUrl} />
+      <Navigation onRouteChange={onRouteChange} isSignedIn={isSignedIn} />
+      {route === "home" ? (
+        <div>
+          <Logo />
+          <Rank />
+          <ImageLinkForm
+            onInputChange={onInputChange}
+            onSubmit={onButtonSubmit}
+          />
+          <FaceRecognition box={box} imageUrl={imageUrl} />
+        </div>
+      ) : route === "register" ? (
+        <Register onRouteChange={onRouteChange} />
+      ) : (
+        <SignIn onRouteChange={onRouteChange} />
+      )}
     </div>
   );
 }
