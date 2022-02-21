@@ -8,7 +8,7 @@ export const Register = ({ onRouteChange }) => {
           <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
             <legend className="f1 fw6 ph0 mh0">Register</legend>
             <div className="mt3">
-              <label className="db fw6 lh-copy f6" htmlfor="name">
+              <label className="db fw6 lh-copy f6" htmlFor="name">
                 Name
               </label>
               <input
@@ -19,7 +19,7 @@ export const Register = ({ onRouteChange }) => {
               />
             </div>
             <div className="mt3">
-              <label className="db fw6 lh-copy f6" htmlfor="email-address">
+              <label className="db fw6 lh-copy f6" htmlFor="email-address">
                 Email
               </label>
               <input
@@ -30,7 +30,7 @@ export const Register = ({ onRouteChange }) => {
               />
             </div>
             <div className="mv3">
-              <label className="db fw6 lh-copy f6" htmlfor="password">
+              <label className="db fw6 lh-copy f6" htmlFor="password">
                 Password
               </label>
               <input

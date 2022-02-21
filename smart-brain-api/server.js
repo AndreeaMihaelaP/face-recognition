@@ -1,8 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt-nodejs");
+const cors = require("cors");
 
 const app = express();
+
 app.use(bodyParser.json());
+app.use(cors());
 
 const database = {
   users: [
@@ -42,6 +46,7 @@ app.post("/signin", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, name, password } = req.body;
+
   database.users.push({
     id: "125",
     name: name,
@@ -51,6 +56,37 @@ app.post("/register", (req, res) => {
     joined: new Date(),
   });
   res.json(database.users[database.users.length - 1]);
+});
+
+app.get("/profile/:id", (req, res) => {
+  const { id } = req.params;
+  const found = false;
+
+  database.users.forEach((user) => {
+    if (user.id === id) {
+      found = true;
+      return res.json(user);
+    }
+    if (!found) {
+      res.status(404).json("nu such user");
+    }
+  });
+});
+
+app.put("/image", (res, req) => {
+  const { id } = req.body;
+  const found = false;
+
+  database.users.forEach((user) => {
+    if (user.id === id) {
+      found = true;
+      user.entries += 1;
+      return res.json(user.entries);
+    }
+    if (!found) {
+      res.status(404).json("nu such user");
+    }
+  });
 });
 
 app.listen(3000, () => {
