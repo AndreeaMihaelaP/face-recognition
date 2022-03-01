@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Particles from "react-tsparticles";
 import Clarifai from "clarifai";
 
@@ -99,12 +99,6 @@ function App() {
   const onInputChange = (event) => {
     setInput(event.target.value);
   };
-
-  useEffect(() => {
-    fetch("http://localhost:3000")
-      .then((response) => response.json())
-      .then(console.log());
-  }, []);
 
   const calculateFaceLocation = (data) => {
     const clarifaiFace =
