@@ -95,6 +95,13 @@ function App() {
   const [box, setBox] = useState({});
   const [route, setRoute] = useState("signin");
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [user, setUser] = useState({
+    id: "",
+    name: "",
+    email: "",
+    entries: 0,
+    joined: "",
+  });
 
   const onInputChange = (event) => {
     setInput(event.target.value);
@@ -115,13 +122,11 @@ function App() {
   };
 
   const displayFaceBox = (box) => {
-    console.log("Box", box);
     setBox(box);
   };
 
   const onButtonSubmit = () => {
     setImageUrl(input);
-    console.log("click");
     app.models
       .predict(
         // .predict('53e1df302c079b3db8a0a36033ed2d15', this.state.input)
@@ -129,6 +134,19 @@ function App() {
         input
       )
       .then((response) => {
+        if (response) {
+          fetch("http://localhost:3000/image", {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: user.id,
+            }),
+          })
+            .then((res) => res.json())
+            .then((count) => {
+              setUser(Object.assign(user, { entries: count }));
+            });
+        }
         displayFaceBox(calculateFaceLocation(response));
       })
       .catch((err) => console.log("err", err));
@@ -143,6 +161,10 @@ function App() {
     setRoute(route);
   };
 
+  const loadUser = (user) => {
+    setUser(user);
+  };
+
   return (
     <div className="App">
       <Particles
@@ -154,7 +176,7 @@ function App() {
       {route === "home" ? (
         <div>
           <Logo />
-          <Rank />
+          <Rank userName={user.name} userEntries={user.entries} />
           <ImageLinkForm
             onInputChange={onInputChange}
             onSubmit={onButtonSubmit}
@@ -162,9 +184,9 @@ function App() {
           <FaceRecognition box={box} imageUrl={imageUrl} />
         </div>
       ) : route === "register" ? (
-        <Register onRouteChange={onRouteChange} />
+        <Register onRouteChange={onRouteChange} loadUser={loadUser} />
       ) : (
-        <SignIn onRouteChange={onRouteChange} />
+        <SignIn onRouteChange={onRouteChange} loadUser={loadUser} />
       )}
     </div>
   );

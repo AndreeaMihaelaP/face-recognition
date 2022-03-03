@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const SignIn = ({ onRouteChange }) => {
+export const SignIn = ({ onRouteChange, loadUser }) => {
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
 
@@ -15,16 +15,19 @@ export const SignIn = ({ onRouteChange }) => {
   const onSubmitSignIn = () => {
     fetch("http://localhost:3000/signin", {
       method: "post",
-      header: { "Content-Type": "application/json" },
-      body: {
-        email: JSON.stringify(signInEmail),
-        password: JSON.stringify(signInPassword),
-      },
-    }).then((data) => {
-      if (data === "success") {
-        onRouteChange("home");
-      }
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: signInEmail,
+        password: signInPassword,
+      }),
+    })
+      .then((response) => response.json())
+      .then((user) => {
+        if (user) {
+          loadUser(user);
+          onRouteChange("home");
+        }
+      });
   };
 
   return (
