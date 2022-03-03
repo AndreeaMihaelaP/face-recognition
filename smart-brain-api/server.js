@@ -38,20 +38,19 @@ app.post("/signin", (req, res) => {
     req.body.email === database.users[0].email &&
     req.body.password === database.users[0].password
   ) {
-    res.json("signin");
+    res.json(database.users[0]);
   } else {
     res.status(400).json("error login in");
   }
 });
 
 app.post("/register", (req, res) => {
-  const { email, name, password } = req.body;
+  const { email, name } = req.body;
 
   database.users.push({
     id: "125",
     name: name,
     email: email,
-    password: password,
     entries: 0,
     joined: new Date(),
   });
@@ -60,7 +59,7 @@ app.post("/register", (req, res) => {
 
 app.get("/profile/:id", (req, res) => {
   const { id } = req.params;
-  const found = false;
+  let found = false;
 
   database.users.forEach((user) => {
     if (user.id === id) {
@@ -73,9 +72,9 @@ app.get("/profile/:id", (req, res) => {
   });
 });
 
-app.put("/image", (res, req) => {
+app.put("/image", (req, res) => {
   const { id } = req.body;
-  const found = false;
+  let found = false;
 
   database.users.forEach((user) => {
     if (user.id === id) {
