@@ -144,7 +144,8 @@ function App() {
           })
             .then((res) => res.json())
             .then((count) => {
-              setUser(Object.assign(user, { entries: count }));
+              console.log("count", count);
+              setUser(Object.assign(user, { entries: count.entries }));
             });
         }
         displayFaceBox(calculateFaceLocation(response));
