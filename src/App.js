@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Particles from "react-tsparticles";
-import Clarifai from "clarifai";
 
 import { Navigation } from "./components/Navigation/Navigation";
 import { Logo } from "./components/Logo/Logo";
@@ -85,10 +84,6 @@ const paramsOptions = {
   detectRetina: true,
 };
 
-const app = new Clarifai.App({
-  apiKey: "41cdd0078df84e479968da3daf3f4ca6",
-});
-
 function App() {
   const [input, setInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -127,12 +122,14 @@ function App() {
 
   const onButtonSubmit = () => {
     setImageUrl(input);
-    app.models
-      .predict(
-        // .predict('53e1df302c079b3db8a0a36033ed2d15', this.state.input)
-        Clarifai.FACE_DETECT_MODEL,
-        input
-      )
+    fetch("http://localhost:3000/imageurl", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: input,
+      }),
+    })
+      .then((res) => res.json())
       .then((response) => {
         if (response) {
           fetch("http://localhost:3000/image", {
@@ -146,7 +143,8 @@ function App() {
             .then((count) => {
               console.log("count", count);
               setUser(Object.assign(user, { entries: count.entries }));
-            });
+            })
+            .catch(console.log("error"));
         }
         displayFaceBox(calculateFaceLocation(response));
       })
@@ -156,6 +154,17 @@ function App() {
   const onRouteChange = (route) => {
     if (route === "signout") {
       setIsSignedIn(false);
+      setInput("");
+      setImageUrl("");
+      setBox({});
+      setRoute("signin");
+      setUser({
+        id: "",
+        name: "",
+        email: "",
+        entries: 0,
+        joined: "",
+      });
     } else if (route === "home") {
       setIsSignedIn(true);
     }
